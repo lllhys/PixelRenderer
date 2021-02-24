@@ -19,7 +19,6 @@ class Effector(AbstractThreadingEffector):
                     continue
                 opacity = self.opacity_transition(0, pixel_opacity, frame_sum, frame_id + 1)
                 render_layer[i][j] = set_color_opacity(pixel_color, opacity)
-        print(self.position)
         return self.position, render_layer
 
     def hide(self, frame_id, frame_sum):

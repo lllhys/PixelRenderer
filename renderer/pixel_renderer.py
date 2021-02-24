@@ -4,7 +4,6 @@ from renderer.effector_loader import get_effector
 from renderer.color import *
 
 
-
 class Renderer:
     canvas = None
 
@@ -12,30 +11,28 @@ class Renderer:
         self.canvas = canvas
 
     def diff_handle(self, diff):
-        diff_type = diff['diff_type']
         change = diff['change']
 
         # effector loader 加载效果器
-        effector = get_effector(diff['effector_name'])(diff)
+        effector = get_effector(diff['effector_name'], change)(diff)
 
-        # 变更类型分为状态变更和位置变更
-        if diff_type == 'state':
-            # 改变类型分为显示和隐藏
-            if change == 'show':
-                return effector.show_render()
-            elif change == 'hide':
-                return effector.hide_render()
+        # 改变类型分为显示和隐藏
+        if change == 'show':
+            return effector.show_render()
+        elif change == 'hide':
+            return effector.hide_render()
+        elif change == 'move':
+            return effector.move_render(diff['new_position'])
 
-    def renderer(self):
+    def render(self):
         diffs = self.canvas.element_diff
-        layer_renderer = LayerRenderer(self.canvas)
+        layer_renderer = LayerRenderer(self.canvas,diffs)
         time_1 = time.time()
         for diff in diffs:
             print(diff)
-            transition_style = self.diff_handle(diff)
-            element = diff['element']
-            layer_renderer.put_element(diff['position'], diff['layer'], transition_style)
-        render_result = layer_renderer.render_layer()
+            transition_position, transition_style = self.diff_handle(diff)
+            layer_renderer.render_layer(diff, transition_position, transition_style)
+        render_result = layer_renderer.render_canvas()
         time_2 = time.time()
         print('renderer time:', time_2 - time_1)
         for i in range(0, render_result.shape[0]):
@@ -78,12 +75,14 @@ class LayerRenderer:
     transition_frame = None
     render_result = None
 
-    def __init__(self, canvas):
+    def __init__(self, canvas,diffs):
         self.shape_a = canvas.shape[0]
         self.shape_b = canvas.shape[1]
-        # 层叠渲染最底层样式为当前画布样式
+        # 层叠渲染第一帧样式为当前画布样式
         self.transition_frame = np.empty((1, canvas.layer_sum, self.shape_a, self.shape_b), dtype='uint32')
         self.transition_frame[0] = canvas.canvas_style
+        for diff in diffs:
+            self.clear_element(diff['layer'], diff['position'], diff['element'], self.transition_frame[0])
 
     def color_opacity_transition(self, color_before, color_add):
         opaque_value = get_color_opacity(color_add)
@@ -104,9 +103,17 @@ class LayerRenderer:
         blue = blue_before + blue_add if blue_before + blue_add < 256 else 255
         return get_hex_color(red, green, blue)
 
-    def put_element(self, position, layer, transition):
-        position_a = position[0]
-        position_b = position[1]
+    def clear_element(self, layer, position, element, canvas):
+        for i in range(0, element.shape[0]):
+            for j in range(0, element.shape[1]):
+                if element.element_mask[i][j] == 0:
+                    continue
+                canvas[layer][position[0] + i][position[1] + j] = 0
+        return canvas
+
+    def render_layer(self, diff, transition_position, transition):
+        layer = diff['layer']
+        # self.clear_element(layer, diff['position'], diff['element'], self.transition_frame[0])
         frame_sum = transition.shape[0]
 
         # 初始化渲染过渡层
@@ -115,6 +122,8 @@ class LayerRenderer:
                 self.transition_frame = np.insert(self.transition_frame, i, values=self.transition_frame[i - 1], axis=0)
         # 逐帧渲染
         for frame in range(0, frame_sum):
+            position_a = transition_position[frame][0]
+            position_b = transition_position[frame][1]
             # 画布层遍历
             for i in range(0, transition.shape[1]):
                 for j in range(0, transition.shape[2]):
@@ -142,7 +151,7 @@ class LayerRenderer:
                     #     self.transition_frame[frame][layer][pixel_position_a][pixel_position_b] =  pixel_color
                     self.transition_frame[frame][layer][pixel_position_a][pixel_position_b] = pixel_color
 
-    def render_layer(self):
+    def render_canvas(self):
         self.render_result = np.zeros(
             (self.transition_frame.shape[0], self.transition_frame.shape[2], self.transition_frame.shape[3]),
             dtype='uint32')

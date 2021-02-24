@@ -7,7 +7,7 @@ from tools.pixel_display import PixelDisplay
 
 
 class PixelCanvas:
-    show_tool = PixelDisplay(pixel_size=25)
+    show_tool = None
     shape = None
     canvas_style = None
     layer_sum = 4
@@ -29,6 +29,7 @@ class PixelCanvas:
             self.canvas_style[0] = np.full(shape,fill_value=background,dtype='uint32')
             # self.canvas_style[0] = np.array([[background] * shape[1]] * shape[0], 'uint32')
         # 配置渲染器
+        self.show_tool = PixelDisplay(shape, pixel_size=25)
         self.renderer = Renderer(self)
         self.render_canvas()
 
@@ -38,7 +39,6 @@ class PixelCanvas:
         self.elements[element_name] = {'layer': layer, 'position': position, 'element': element}
         self.element_diff.append({
             'element_name': element_name,
-            'diff_type': 'state',
             'change': 'show',
             'effector_name': effector_name,
             'layer': layer,
@@ -51,7 +51,6 @@ class PixelCanvas:
         element_desc = self.elements[element_name]
         self.element_diff.append({
             'element_name': element_name,
-            'diff_type': 'state',
             'change': 'hide',
             'effector_name': effector_name,
             'layer': element_desc['layer'],
@@ -61,21 +60,33 @@ class PixelCanvas:
         if self.auto_renderer:
             self.render_canvas()
 
-    def change_element_level(self, element_name, level):
-        self.elements.get(element_name).update('level', level)
 
-    def change_element_position(self, element_name,position,effector_name='Default'):
+    def change_element_position(self, element_name, new_position, effector_name='Default'):
+        # # print('change')
+        # element_desc = self.elements[element_name]
+        # print(element_desc)
+        # element = element_desc['element']
+        # layer = element_desc['layer']
+        # element_position = element_desc['position']
+        # for i in range(element_position[0], new_position[0]):
+        #     # self.remove_element(element_name,'Default')
+        #     self.put_element(element_name,element,layer=layer,position=(i,element_position[1]),effector_name='Default')
+        # for i in range(element_position[1], new_position[1]):
+        #     # self.remove_element(element_name,'Default')
+        #     self.put_element(element_name, element, layer=layer, position=(new_position[0], i), effector_name='Default')
         element_desc = self.elements[element_name]
-        element_desc['position'] = position
+
         self.element_diff.append({
             'element_name': element_name,
-            'diff_type': 'state',
             'change': 'move',
             'effector_name': effector_name,
             'layer': element_desc['layer'],
             'position': element_desc['position'],
+            'new_position': new_position,
             'element': element_desc['element']})
-
+        if self.auto_renderer:
+            self.render_canvas()
+        element_desc['position'] = new_position
 
 
     def render_canvas(self):
@@ -84,7 +95,7 @@ class PixelCanvas:
         :return:
         '''
         # 交由渲染引擎进行差异渲染
-        self.renderer.renderer()
+        self.renderer.render()
 
     def show(self):
         # print(self.matrix)

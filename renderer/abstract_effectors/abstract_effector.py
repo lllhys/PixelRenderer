@@ -39,8 +39,8 @@ class AbstractEffector(metaclass=ABCMeta):
     def hide_render(self):
         return self.hide()
 
-    def move_render(self):
-        return self.move()
+    def move_render(self,new_position):
+        return self.move(new_position)
 
     def switch_render(self, element_after):
         return self.switch_element_style(element_after)
@@ -62,7 +62,7 @@ class AbstractEffector(metaclass=ABCMeta):
         return None
 
     @abstractmethod
-    def move(self):
+    def move(self,new_position):
         """
         元素过渡动画渲染函数
         :return: 所有过渡帧

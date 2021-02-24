@@ -9,25 +9,33 @@ from renderer.color import *
 if __name__ == '__main__':
 
 
-
+# ,get_opacity_color(0xff,0,0xff)
     pixel_canvas = PixelCanvas((8,32),get_opacity_color(0xff,0,0xff))
     time.sleep(1)
 
-
+    # pixel_canvas.auto_renderer_close()
     color_style_1 = get_color_style((5,5),0xffffff00)
     # color_style_1 = get_random_color_style((5,5))
-    element_3 = PixelElement(0, static_font.num_3_mask, color_style_1)
+    element_3 = PixelElement(1, color_style_1, static_font.num_3_mask)
     pixel_canvas.put_element('3',element_3,layer=1,position=(1,12))
 
 
     color_style_2 = get_color_style((5,5),0xff0000ff)
     # color_style_2 = get_random_color_style((5,5))
-    element_5 = PixelElement(0, static_font.num_5_mask, color_style_2)
-    pixel_canvas.put_element('5',element_5,layer=2,position=(2,14),effector_name='abc')
+    element_5 = PixelElement(0, color_style_2, static_font.num_5_mask)
+    pixel_canvas.put_element('5',element_5,layer=2,position=(3,14))
+
+    # pixel_canvas.auto_renderer_open()
     time.sleep(0.5)
 
+    pixel_canvas.auto_renderer_close()
+    pixel_canvas.change_element_position('3',(3,14))
 
-    pixel_canvas.remove_element('5',effector_name='dccd')
+    pixel_canvas.change_element_position('5',(1,12))
 
+    pixel_canvas.auto_renderer_open()
+    time.sleep(0.5)
+    pixel_canvas.remove_element('5')
+    pixel_canvas.remove_element('3')
 
     pixel_canvas.show_tool.idle()

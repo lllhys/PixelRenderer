@@ -21,8 +21,7 @@ class PixelElement:
             if color_style is None:
                 # logger.error('element type设为仅颜色时，color_matrix不允许为空')
                 print('element type设为仅颜色时，color_matrix不允许为空')
-                return
-
+                # return
             self.color_style = color_style
             self.element_style = color_style
             self.shape = color_style.shape
@@ -30,8 +29,6 @@ class PixelElement:
         else:
             # logger.error('非法的element_type')
             print('非法的element_type')
-        # print(self.element_style)
-
 
 
     def get_element_style(self):
