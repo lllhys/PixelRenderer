@@ -26,7 +26,6 @@ class PixelCanvas:
         self.canvas_style = np.zeros((layer_sum,shape[0], shape[1]), 'uint32')
         # 设置背景层颜色
         if background is not 0x0:
-            print(np.__version__)
             self.canvas_style[0] = np.full(shape,fill_value=background,dtype='uint32')
             # self.canvas_style[0] = np.array([[background] * shape[1]] * shape[0], 'uint32')
         # 配置渲染器

@@ -126,8 +126,8 @@ class LayerRenderer:
                     pixel_color = transition[frame][i][j]
                     # print(pixel_color)
                     # 透明度设为0xff时不进行渲染
-                    if pixel_color == 0:
-                        continue
+                    # if pixel_color == 0:
+                    #     continue
                     # TODO 同层覆盖时渲染
                     # color_before = self.transition_frame[frame][layer][pixel_position_a][pixel_position_b]
                     # if color_before is not 0:

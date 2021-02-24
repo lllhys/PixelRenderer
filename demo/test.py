@@ -23,11 +23,11 @@ if __name__ == '__main__':
     color_style_2 = get_color_style((5,5),0xff0000ff)
     # color_style_2 = get_random_color_style((5,5))
     element_5 = PixelElement(0, static_font.num_5_mask, color_style_2)
-    pixel_canvas.put_element('5',element_5,layer=2,position=(2,14))
+    pixel_canvas.put_element('5',element_5,layer=2,position=(2,14),effector_name='abc')
     time.sleep(0.5)
 
 
-    pixel_canvas.remove_element('5')
+    pixel_canvas.remove_element('5',effector_name='dccd')
 
 
     pixel_canvas.show_tool.idle()

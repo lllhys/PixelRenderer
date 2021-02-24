@@ -55,7 +55,7 @@ def get_effector(effector_name):
     if _effectors.get(effector_name) is not None:
         return _effectors[effector_name]
     else:
-        print("效果器{}不存在，使用默认效果器")
+        print("效果器{}不存在，使用Default效果器".format(effector_name))
         return _effectors['Default']
 
 
