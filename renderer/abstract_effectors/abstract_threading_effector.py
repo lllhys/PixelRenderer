@@ -21,8 +21,8 @@ class RenderThread(Thread):
 
 
 class AbstractThreadingEffector(metaclass=ABCMeta):
-
-    name = 'AbstractThreadingEffector'
+    _name_ = 'AbstractThreadingEffector'
+    _func_ = ['show', 'hide', 'move', 'switch']
 
     element = None
     position = None
@@ -50,25 +50,26 @@ class AbstractThreadingEffector(metaclass=ABCMeta):
         opacity_step = (opacity_before - opacity_after) / layer_sum
         return int(opacity_before - opacity_step * layer_id)
 
-    def multi_threading_render(self,_func):
+    def multi_threading_render(self, _func):
         frame_sum = self.get_frame_sum()
         # 线程列表
         threading_list = []
-        for frame in range(0,frame_sum):
-            thread = RenderThread(_func,args=(frame,frame_sum))
+        for frame in range(0, frame_sum):
+            thread = RenderThread(_func, args=(frame, frame_sum))
             threading_list.append(thread)
             thread.start()
             thread.join()
         # 初始化一个渲染结果数组
-        render_result = np.empty((frame_sum,self.element_shape[0],self.element_shape[1]), dtype='uint32')
-        for frame in range(0,frame_sum):
-            render_result[frame] = threading_list[frame].get_result()
-        return render_result
+        position_list = []
+        render_result = np.empty((frame_sum, self.element_shape[0], self.element_shape[1]), dtype='uint32')
+        for frame in range(0, frame_sum):
+            position, frame_style = threading_list[frame].get_result()
+            render_result[frame] = frame_style
+            position_list.append(position)
+        return position_list, render_result
 
-    # TODO 多线程渲染
     def show_render(self):
         return self.multi_threading_render(self.show)
-
 
     def hide_render(self):
         return self.multi_threading_render(self.hide)
@@ -84,7 +85,7 @@ class AbstractThreadingEffector(metaclass=ABCMeta):
         return 5
 
     @abstractmethod
-    def show(self, frame_id,frame_sum):
+    def show(self, frame_id, frame_sum):
         """
         多线程渲染方法，frame_id为帧id
         :param frame_id: 帧id
@@ -93,7 +94,7 @@ class AbstractThreadingEffector(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def hide(self, frame_id,frame_sum):
+    def hide(self, frame_id, frame_sum):
         """
         多线程渲染方法，frame_id为帧id
         :param frame_id: 帧id
@@ -102,7 +103,7 @@ class AbstractThreadingEffector(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def move(self, frame_id,frame_sum):
+    def move(self, frame_id, frame_sum):
         """
         多线程渲染方法，frame_id为帧id
         :param frame_id: 帧id
@@ -111,12 +112,10 @@ class AbstractThreadingEffector(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def switch_element_style(self, element_after, frame_id,frame_sum):
+    def switch_element_style(self, element_after, frame_id, frame_sum):
         """
         多线程渲染方法，frame_id为帧id
         :param frame_id: 帧id
         :return: 当前过渡帧
         """
         pass
-
-

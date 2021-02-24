@@ -4,8 +4,8 @@ from renderer.color import *
 
 
 class AbstractEffector(metaclass=ABCMeta):
-
-    name = 'AbstractEffector'
+    _name_ = 'AbstractEffector'
+    _func_ = ['show', 'hide', 'move', 'switch']
 
     element = None
     position = None
@@ -42,9 +42,8 @@ class AbstractEffector(metaclass=ABCMeta):
     def move_render(self):
         return self.move()
 
-    def switch_render(self,element_after):
+    def switch_render(self, element_after):
         return self.switch_element_style(element_after)
-
 
     @abstractmethod
     def show(self):
@@ -77,7 +76,3 @@ class AbstractEffector(metaclass=ABCMeta):
         :return: 所有过渡帧
         """
         return None
-
-
-
-
