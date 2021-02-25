@@ -40,7 +40,7 @@ def init_effectors():
             nameSet.add(effector_name)
             func = mod.Effector._func_
             _effectors[effector_name] = {'func':func,'effector':mod.Effector}
-            print("效果器 {} 加载成功 ".format(name))
+            print("{} 效果器加载成功".format(effector_name))
     _has_init = True
 
 
