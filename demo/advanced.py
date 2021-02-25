@@ -1,29 +1,3 @@
-# 使用
-## 入门
-```python
-import time
-from renderer import static_font
-from renderer.pixel_canvas import PixelCanvas
-from renderer.pixel_element import PixelElement
-from renderer.color import *
-
-if __name__ == '__main__':
-    # 定义一个画布
-    pixel_canvas = PixelCanvas((8,32))
-    # 停顿1秒
-    time.sleep(1)
-    # 使用静态资源'数字3'初始化一个元素，颜色为0xff00ff
-    element = PixelElement(element_type=3,element_mask=static_font.num_3_mask,color=get_opacity_color(0xff,0,0xff))
-    # 将元素放置于画布上
-    pixel_canvas.put_element(element_name='3',element=element,layer=1,position=(1,12))
-    # 保持窗口停留
-    pixel_canvas.show_tool.idle()
-```
-运行一下，看看有什么效果吧！
-
-## 进阶
-上面演示了一些简单的操作，打开一个画布并在画布上放置一个元素。下面我们来尝试一下一些有趣的东西。
-```python
 import time
 from renderer import static_font
 from renderer.pixel_canvas import PixelCanvas
@@ -58,5 +32,3 @@ if __name__ == '__main__':
     pixel_canvas.auto_renderer_open()
     # 保持窗口停留
     pixel_canvas.show_tool.idle()
-```
-运行一下看看有什么效果吧！
