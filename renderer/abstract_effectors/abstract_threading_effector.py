@@ -68,6 +68,7 @@ class AbstractThreadingEffector(metaclass=ABCMeta):
             position_list.append(position)
         return position_list, render_result
 
+
     def show_render(self):
         return self.multi_threading_render(self.show)
 
@@ -78,7 +79,10 @@ class AbstractThreadingEffector(metaclass=ABCMeta):
         return self.multi_threading_render(self.move)
 
     def switch_render(self, element_after):
-        return self.multi_threading_render(self.switch_render)
+        hide_position, hide_render = self.multi_threading_render(self.hide)
+        self.element_style = element_after.element_style
+        show_position, show_render = self.multi_threading_render(self.show)
+        return hide_position+show_position, np.vstack((hide_render,show_render))
 
     @abstractmethod
     def get_frame_sum(self):

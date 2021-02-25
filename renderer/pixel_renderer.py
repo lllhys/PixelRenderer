@@ -172,6 +172,7 @@ class LayerRenderer:
             dtype='uint32')
 
 
+
         # for frame in range(0, self.transition_frame.shape[0]):
         #     for layer in range(0, self.transition_frame.shape[1]):
         #         for i in range(0, self.transition_frame.shape[2]):
@@ -196,13 +197,14 @@ class LayerRenderer:
             if pixel_color < 0x01000000:
                 it.iternext()
                 continue
+            index = it.multi_index
             # 0层不需要渲染，以及不透明不需要渲染
             if get_color_opacity(pixel_color) == 0xff or it.multi_index[1] == 0:
                 # 完全不透明,清除透明度通道，并赋值
-                self.render_result[it.multi_index[0]][it.multi_index[2]][it.multi_index[3]] = pixel_color & 0x00ffffff
+                self.render_result[index[0]][index[2]][index[3]] = pixel_color & 0x00ffffff
             else:
                 # 部分透明
-                color_before = self.render_result[it.multi_index[0]][it.multi_index[2]][it.multi_index[3]]
-                self.render_result[it.multi_index[0]][it.multi_index[2]][it.multi_index[3]] = self.color_opacity_transition(color_before, pixel_color)
+                color_before = self.render_result[index[0]][index[2]][index[3]]
+                self.render_result[index[0]][index[2]][index[3]] = self.color_opacity_transition(color_before, pixel_color)
             it.iternext()
         return self.render_result

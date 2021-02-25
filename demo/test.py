@@ -37,6 +37,10 @@ if __name__ == '__main__':
     # pixel_canvas.remove_element('5')
     # pixel_canvas.remove_element('3')
     pixel_canvas.switch_element_style('5',element_3)
+
+    # pixel_canvas.remove_element('5')
+    pixel_canvas.change_element_position('5',(4,4))
+    # pixel_canvas.put_element('5',element_5,0,(0,13))
     pixel_canvas.show_tool.idle()
 
 
