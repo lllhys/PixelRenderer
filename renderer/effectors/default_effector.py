@@ -35,5 +35,7 @@ class Effector(AbstractEffector):
 
 
     def switch_element_style(self, element_after):
-        pass
+        render_result = np.empty((1,element_after.shape[0],element_after.shape[1]),dtype='uint32')
+        render_result[0] = element_after.element_style
+        return [self.position], render_result
 

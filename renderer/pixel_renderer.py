@@ -23,6 +23,8 @@ class Renderer:
             return effector.hide_render()
         elif change == 'move':
             return effector.move_render(diff['new_position'])
+        elif change == 'switch':
+            return effector.switch_render(diff['new_element'])
 
     def render(self):
         diffs = self.canvas.element_diff
@@ -121,53 +123,86 @@ class LayerRenderer:
             for i in range(self.transition_frame.shape[0], frame_sum):
                 self.transition_frame = np.insert(self.transition_frame, i, values=self.transition_frame[i - 1], axis=0)
         # 逐帧渲染
-        for frame in range(0, frame_sum):
-            position_a = transition_position[frame][0]
-            position_b = transition_position[frame][1]
-            # 画布层遍历
-            for i in range(0, transition.shape[1]):
-                for j in range(0, transition.shape[2]):
-                    pixel_position_a = position_a + i
-                    pixel_position_b = position_b + j
-                    # 像素位置合法性判断
-                    if pixel_position_a >= self.shape_a or pixel_position_b >= self.shape_b or pixel_position_a<0 or pixel_position_b < 0:
-                        continue
-                    pixel_color = transition[frame][i][j]
-                    # print(pixel_color)
-                    # 透明度设为0xff时不进行渲染
-                    # if pixel_color == 0:
-                    #     continue
-                    # TODO 同层覆盖时渲染
-                    # color_before = self.transition_frame[frame][layer][pixel_position_a][pixel_position_b]
-                    # if color_before is not 0:
-                    #     # 同层渲染
-                    #     color_add = set_color_opacity(pixel_color,128)
-                    #     # self.transition_layer[frame + 1][pixel_position_a][pixel_position_b] = self.same_layer_renderer(
-                    #     #     color_before, color_add)
-                    #     self.transition_frame[frame][layer][pixel_position_a][pixel_position_b] = self.color_opacity_transition(
-                    #         color_before, color_add)
-                    # else:
-                    #     # 样式覆盖
-                    #     self.transition_frame[frame][layer][pixel_position_a][pixel_position_b] =  pixel_color
-                    self.transition_frame[frame][layer][pixel_position_a][pixel_position_b] = pixel_color
+        # for frame in range(0, frame_sum):
+        #     position_a = transition_position[frame][0]
+        #     position_b = transition_position[frame][1]
+        #     # 画布层遍历
+        #     for i in range(0, transition.shape[1]):
+        #         for j in range(0, transition.shape[2]):
+        #             pixel_position_a = position_a + i
+        #             pixel_position_b = position_b + j
+        #             # 像素位置合法性判断
+        #             if pixel_position_a >= self.shape_a or pixel_position_b >= self.shape_b or pixel_position_a<0 or pixel_position_b < 0:
+        #                 continue
+        #             pixel_color = transition[frame][i][j]
+        #             # print(pixel_color)
+        #             # 透明度设为0xff时不进行渲染
+        #             # if pixel_color == 0:
+        #             #     continue
+        #             # TODO 同层覆盖时渲染
+        #             # color_before = self.transition_frame[frame][layer][pixel_position_a][pixel_position_b]
+        #             # if color_before is not 0:
+        #             #     # 同层渲染
+        #             #     color_add = set_color_opacity(pixel_color,128)
+        #             #     # self.transition_layer[frame + 1][pixel_position_a][pixel_position_b] = self.same_layer_renderer(
+        #             #     #     color_before, color_add)
+        #             #     self.transition_frame[frame][layer][pixel_position_a][pixel_position_b] = self.color_opacity_transition(
+        #             #         color_before, color_add)
+        #             # else:
+        #             #     # 样式覆盖
+        #             #     self.transition_frame[frame][layer][pixel_position_a][pixel_position_b] =  pixel_color
+        #             self.transition_frame[frame][layer][pixel_position_a][pixel_position_b] = pixel_color
+
+        it = np.nditer(transition, flags=['multi_index'])
+        while not it.finished:
+            pixel_color = it[0]
+            frame = it.multi_index[0]
+            pixel_position_a = it.multi_index[1]+transition_position[frame][0]
+            pixel_position_b = it.multi_index[2]+transition_position[frame][1]
+            # 像素位置合法性判断
+            if pixel_position_a >= self.shape_a or pixel_position_b >= self.shape_b or pixel_position_a<0 or pixel_position_b < 0:
+                it.iternext()
+                continue
+            self.transition_frame[frame][layer][pixel_position_a][pixel_position_b] = pixel_color
+            it.iternext()
 
     def render_canvas(self):
         self.render_result = np.zeros(
             (self.transition_frame.shape[0], self.transition_frame.shape[2], self.transition_frame.shape[3]),
             dtype='uint32')
-        for frame in range(0, self.transition_frame.shape[0]):
-            for layer in range(0, self.transition_frame.shape[1]):
-                for i in range(0, self.transition_frame.shape[2]):
-                    for j in range(0, self.transition_frame.shape[3]):
-                        pixel_color = self.transition_frame[frame][layer][i][j]
-                        # 不透明度为0
-                        if pixel_color < 0x01000000:
-                            continue
-                        if get_color_opacity(pixel_color) == 0xff or layer == 0:
-                            # 完全不透明,清除透明度通道，并赋值
-                            self.render_result[frame][i][j] = pixel_color & 0x00ffffff
-                        else:
-                            # 部分透明
-                            color_before = self.render_result[frame][i][j]
-                            self.render_result[frame][i][j] = self.color_opacity_transition(color_before, pixel_color)
+
+
+        # for frame in range(0, self.transition_frame.shape[0]):
+        #     for layer in range(0, self.transition_frame.shape[1]):
+        #         for i in range(0, self.transition_frame.shape[2]):
+        #             for j in range(0, self.transition_frame.shape[3]):
+        #                 pixel_color = self.transition_frame[frame][layer][i][j]
+        #                 # 不透明度为0
+        #                 if pixel_color < 0x01000000:
+        #                     continue
+        #                 if get_color_opacity(pixel_color) == 0xff or layer == 0:
+        #                     # 完全不透明,清除透明度通道，并赋值
+        #                     self.render_result[frame][i][j] = pixel_color & 0x00ffffff
+        #                 else:
+        #                     # 部分透明
+        #                     color_before = self.render_result[frame][i][j]
+        #                     self.render_result[frame][i][j] = self.color_opacity_transition(color_before, pixel_color)
+
+        # 新版本 使用nditer
+        it = np.nditer(self.transition_frame, flags=['multi_index'])
+        while not it.finished:
+            pixel_color = it[0]
+            # 不透明度为0
+            if pixel_color < 0x01000000:
+                it.iternext()
+                continue
+            # 0层不需要渲染，以及不透明不需要渲染
+            if get_color_opacity(pixel_color) == 0xff or it.multi_index[1] == 0:
+                # 完全不透明,清除透明度通道，并赋值
+                self.render_result[it.multi_index[0]][it.multi_index[2]][it.multi_index[3]] = pixel_color & 0x00ffffff
+            else:
+                # 部分透明
+                color_before = self.render_result[it.multi_index[0]][it.multi_index[2]][it.multi_index[3]]
+                self.render_result[it.multi_index[0]][it.multi_index[2]][it.multi_index[3]] = self.color_opacity_transition(color_before, pixel_color)
+            it.iternext()
         return self.render_result

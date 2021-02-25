@@ -16,7 +16,7 @@ class AbstractEffector(metaclass=ABCMeta):
         self.element = element_desc['element']
         self.position = element_desc['position']
         self.element_shape = self.element.shape
-        self.element_style = self.element.get_element_style()
+        self.element_style = self.element.element_style
 
     def color_transition(self, color_before, color_after, layer_sum, layer_id):
         if color_before == color_after:

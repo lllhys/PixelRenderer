@@ -4,7 +4,7 @@ from renderer.color import *
 
 class Effector(AbstractThreadingEffector):
     _name_ = 'Fade'
-    _func_ = ['show', 'hide', 'switch']
+    _func_ = ['show', 'hide']
 
     def get_frame_sum(self):
         return 5
@@ -37,4 +37,7 @@ class Effector(AbstractThreadingEffector):
         return None
 
     def switch_element_style(self, element_after, frame_id, frame_sum):
-        return None
+        if frame_id < frame_sum/2:
+            return self.hide(frame_id,frame_sum/2)
+        else:
+            return None

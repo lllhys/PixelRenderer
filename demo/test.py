@@ -34,7 +34,10 @@ if __name__ == '__main__':
 
     pixel_canvas.auto_renderer_open()
     time.sleep(0.5)
-    pixel_canvas.remove_element('5')
-    pixel_canvas.remove_element('3')
-
+    # pixel_canvas.remove_element('5')
+    # pixel_canvas.remove_element('3')
+    pixel_canvas.switch_element_style('5',element_3)
     pixel_canvas.show_tool.idle()
+
+
+

@@ -62,20 +62,7 @@ class PixelCanvas:
 
 
     def change_element_position(self, element_name, new_position, effector_name='Default'):
-        # # print('change')
-        # element_desc = self.elements[element_name]
-        # print(element_desc)
-        # element = element_desc['element']
-        # layer = element_desc['layer']
-        # element_position = element_desc['position']
-        # for i in range(element_position[0], new_position[0]):
-        #     # self.remove_element(element_name,'Default')
-        #     self.put_element(element_name,element,layer=layer,position=(i,element_position[1]),effector_name='Default')
-        # for i in range(element_position[1], new_position[1]):
-        #     # self.remove_element(element_name,'Default')
-        #     self.put_element(element_name, element, layer=layer, position=(new_position[0], i), effector_name='Default')
         element_desc = self.elements[element_name]
-
         self.element_diff.append({
             'element_name': element_name,
             'change': 'move',
@@ -87,6 +74,20 @@ class PixelCanvas:
         if self.auto_renderer:
             self.render_canvas()
         element_desc['position'] = new_position
+
+    def switch_element_style(self,element_name,new_element,effector_name='Fade'):
+        element_desc = self.elements[element_name]
+        self.element_diff.append({
+            'element_name': element_name,
+            'change': 'switch',
+            'effector_name': effector_name,
+            'layer': element_desc['layer'],
+            'position': element_desc['position'],
+            'new_element': new_element,
+            'element': element_desc['element']})
+        if self.auto_renderer:
+            self.render_canvas()
+        element_desc['element'] = new_element
 
 
     def render_canvas(self):
