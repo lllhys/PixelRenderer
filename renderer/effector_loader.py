@@ -13,10 +13,7 @@ def init_effectors():
     """
 
     global _has_init
-    print()
-    # os.path.normpath()
-    # locations = [config.get_effector_path()]
-    locations = ["./effectors"]
+    locations = [os.path.abspath(os.path.dirname(__file__))+"/effectors"]
     print("检查效果器目录：{}".format(locations))
 
     global _effectors

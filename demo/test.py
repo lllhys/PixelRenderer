@@ -1,3 +1,4 @@
+import os
 import time
 
 from renderer import static_font
@@ -12,11 +13,13 @@ if __name__ == '__main__':
 # ,get_opacity_color(0xff,0,0xff)
     pixel_canvas = PixelCanvas((8,32))
     time.sleep(1)
-
+    # color_style_1 = get_random_color_style((6,6))
+    # element_p = PixelElement(0,element_mask=static_font.P_mask,color_style=color_style_1)
+    # pixel_canvas.put_element('p',element_p,1,(1,10))
     # pixel_canvas.auto_renderer_close()
-    # color_style_1 = get_random_color_style((5,5))
+    color_style_1 = get_random_color_style((5,5))
     element_3 = PixelElement(element_type=3,element_mask=static_font.num_3_mask,color=get_opacity_color(0xff,0,0xff))
-    pixel_canvas.put_element('3',element_3,layer=1,position=(1,12))
+    pixel_canvas.put_element(element_name='3',element=element_3,layer=1,position=(1,12))
 
 
     color_style_2 = get_color_style((5,5),0xffffff00)
@@ -40,7 +43,8 @@ if __name__ == '__main__':
 
     # pixel_canvas.remove_element('5')
     pixel_canvas.change_element_position('5',(4,4))
-    # pixel_canvas.put_element('5',element_5,0,(0,13))
+    pixel_canvas.put_element('5',element_5,3,(0,13))
+
     pixel_canvas.show_tool.idle()
 
 
