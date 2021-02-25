@@ -29,7 +29,7 @@ class Renderer:
         layer_renderer = LayerRenderer(self.canvas,diffs)
         time_1 = time.time()
         for diff in diffs:
-            print(diff)
+            # print(diff)
             transition_position, transition_style = self.diff_handle(diff)
             layer_renderer.render_layer(diff, transition_position, transition_style)
         render_result = layer_renderer.render_canvas()
@@ -38,8 +38,8 @@ class Renderer:
         for i in range(0, render_result.shape[0]):
             time.sleep(0.05)
             self.canvas.show_tool.set_all(render_result[i])
-        time_3 = time.time()
-        print('show time:', time_3 - time_2)
+        # time_3 = time.time()
+        # print('show time:', time_3 - time_2)
         # diff 清空
         self.canvas.element_diff.clear()
         # 更新画布最后画面
@@ -130,7 +130,7 @@ class LayerRenderer:
                     pixel_position_a = position_a + i
                     pixel_position_b = position_b + j
                     # 像素位置合法性判断
-                    if pixel_position_a >= self.shape_a or pixel_position_b >= self.shape_b:
+                    if pixel_position_a >= self.shape_a or pixel_position_b >= self.shape_b or pixel_position_a<0 or pixel_position_b < 0:
                         continue
                     pixel_color = transition[frame][i][j]
                     # print(pixel_color)

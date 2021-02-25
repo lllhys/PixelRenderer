@@ -25,22 +25,12 @@ def set_color_opacity(opacity_color, opacity):
 
 
 def get_random_color_style(shape):
-    color_style = np.zeros(shape, 'uint32')
-    for i in range(0, shape[0]):
-        for j in range(0, shape[1]):
-            color_style[i][j] = random.randint(0, 0x00ffffff)
-    return color_style
+    return np.random.randint(0xff000000,0xffffffff,shape,dtype='uint32')
 
 
 def get_color_style(shape, color):
-    color_style = np.array([[color] * shape[1]] * shape[0], 'uint32')
-    return color_style
+    return np.full(shape,color,dtype='uint32')
 
-    # def get_transparent_color_style(shape):
-    #     list = 0xff000000
-    #     for i in range(len(shape)-1,-1,-1) :
-    #         list = [list]*shape[i]
-    #     return np.array(list,dtype='uint32')
 
 def color_transition(self, color_before, color_after, layer_sum, layer_id):
     if color_before == color_after:
