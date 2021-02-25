@@ -8,7 +8,7 @@ class PixelElement:
     element_style = None
 
     def __init__(self, element_type, color_style=None, element_mask=None,color=0xffffffff):
-        if element_type == 0:
+        if element_type == 1:
             if element_mask is None or color_style is None:
                 # logger.error('element type设为掩膜+颜色时，element_mask或color_matrix不允许为空')
                 print('element type设为掩膜+样式时，element_mask和color_matrix不允许为空')
@@ -17,7 +17,7 @@ class PixelElement:
             self.color_style = color_style
             self.element_style = self.get_element_style()
             self.shape = element_mask.shape
-        elif element_type == 1:
+        elif element_type == 2:
             if color_style is None:
                 # logger.error('element type设为仅颜色时，color_matrix不允许为空')
                 print('element type设为仅颜色时，color_matrix不允许为空')
