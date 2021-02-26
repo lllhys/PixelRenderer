@@ -4,7 +4,10 @@
 * [概念](concept.md)
 * [使用](usage.md)
 * [功能](function.md)
-* [效果器开发](develop.md)
+* 效果器开发
+  * [概述](develop_effector/README.md)
+  * [AbstractEffector](develop_effector/use_abstract_effector.md)
+  * [AbstractThreadingEffector](develop_effector/use_abstract_threading.md)
 * API手册
   * [PixelCanvas](APIs/PixelCanvas_api.md)
   * [PixelElement](APIs/PixelElement_api.md)
