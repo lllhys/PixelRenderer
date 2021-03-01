@@ -173,7 +173,7 @@ Opacity color为PixelRenderer中自定义的具有不透明度的颜色，为uin
 
 ##### 返回
 
-- shape大小的numpy.matrix随机颜色矩阵
+- shape大小的numpy.ndarray随机颜色矩阵
 
 ---
 
@@ -197,7 +197,7 @@ Opacity color为PixelRenderer中自定义的具有不透明度的颜色，为uin
 
 ##### 返回
 
-- shape大小的numpy.matrix指定颜色矩阵
+- shape大小的numpy.ndarray指定颜色矩阵
 
 ---
 

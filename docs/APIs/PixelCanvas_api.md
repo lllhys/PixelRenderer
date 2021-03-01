@@ -7,7 +7,7 @@
 |:----     	 |:---- |   :-:   |
 |show_tool|PixelDisplay|暂不支持指定显示工具|
 |shape|tuple(2)|画布大小|
-|canvas_style|numpy.matrix|画布样式，存储了当前画布样式|
+|canvas_style|numpy.ndarray|画布样式，存储了当前画布样式|
 |layer_sum|int|画布层数，默认为4层|
 |elements|Dirt|画布当前元素|
 |element_diff|List|当前未渲染差异|
