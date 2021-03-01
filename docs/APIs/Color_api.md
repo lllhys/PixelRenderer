@@ -41,7 +41,7 @@ Opacity color为PixelRenderer中自定义的具有不透明度的颜色，为uin
 
 - 获取用于PixelDisplay显示的颜色
 
-!> 内部方法，请勿在自定义效果器中使用该方法！效果器中请使用[get_opacity_color](#get_opacity_color)
+!> 内部方法，请勿在自定义效果器中使用该方法！效果器中请使用[get_opacity_color](#get_opacity_color)。
 
 ##### 参数
 
@@ -92,6 +92,9 @@ Opacity color为PixelRenderer中自定义的具有不透明度的颜色，为uin
 ##### 介绍
 
 - 从Hex color 获取RGB通道值
+
+!> 内部方法，请勿在自定义效果器中使用该方法！效果器中请使用[get_opacity_color](#get_opacity_color)。
+
 
 ##### 参数
 
