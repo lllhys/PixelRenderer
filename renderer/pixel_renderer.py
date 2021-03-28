@@ -2,7 +2,7 @@ import time
 from renderer.effectors.fade_effector import Effector
 from renderer.effector_loader import get_effector
 from renderer.color import *
-
+import cv2
 
 class Renderer:
     canvas = None
@@ -12,7 +12,6 @@ class Renderer:
 
     def diff_handle(self, diff):
         change = diff['change']
-
         # effector loader 加载效果器
         effector = get_effector(diff['effector_name'], change)(diff)
 
@@ -71,6 +70,55 @@ class Renderer:
                 time.sleep(freq_t)
 
 
+    def show_from_numpy(self, img_np):
+        # print(img_np.shape)
+        # 图片数组裁剪
+        canvas_rate = self.canvas.shape[1]/self.canvas.shape[0]
+        img_rate = img_np.shape[1] / img_np.shape[0]
+        result = np.zeros(self.canvas.shape,dtype="uint32")
+        if canvas_rate>img_rate:
+            block_size = int(img_np.shape[1] / result.shape[1])
+            base = int((img_np.shape[0] - block_size * result.shape[0]) / 2)
+            # width 重合，裁剪height
+            for i in range(0,result.shape[0]):
+                for j in range(0,result.shape[1]):
+                    block = img_np[base + block_size * i:base + block_size * (i + 1), block_size * j:block_size * (j + 1)]
+                    blue= int(np.mean(block[:,:,0:1]))
+                    green = int(np.mean(block[:,:,1:2]))
+                    red = int(np.mean(block[:,:,2:]))
+                    result[i][j] = get_hex_color(red,green,blue)
+        else:
+            block_size = int(img_np.shape[0] / result.shape[0])
+            base = int((img_np.shape[1] - block_size * result.shape[1]) / 2)
+            # width 重合，裁剪height
+            for i in range(0,result.shape[0]):
+                for j in range(0,result.shape[1]):
+                    block = img_np[block_size * i:block_size * (i + 1), base + block_size * j:base + block_size * (j + 1)]
+                    blue= int(np.mean(block[:,:,0:1]))
+                    green = int(np.mean(block[:,:,1:2]))
+                    red = int(np.mean(block[:,:,2:]))
+                    result[i][j] = get_hex_color(red,green,blue)
+        return result
+
+    def show_from_picture(self,picture):
+        img = cv2.imread(picture)
+        result = self.show_from_numpy(img)
+        self.canvas.show_tool.set_all(result)
+
+    def show_from_video(self,video,loop_repeat):
+        while True:
+            cap = cv2.VideoCapture(video)#打开视频
+            while cap.isOpened():
+                ret,frame = cap.read() #读取视频返回视频是否结束的bool值和每一帧的图像
+                if not ret:
+                    break
+                result = self.show_from_numpy(frame)
+                self.canvas.show_tool.set_all(result)
+            if loop_repeat is not True:
+                break
+
+
+
 class LayerRenderer:
     shape_a = 0
     shape_b = 0
@@ -90,16 +138,16 @@ class LayerRenderer:
         opaque_value = get_color_opacity(color_add)
         unopacity = (0xff - opaque_value) / 0xff
         opacity = opaque_value / 0xff
-        red_before, green_before, blue_before = get_RGB_color(color_before)
-        red_add, green_add, blue_add = get_RGB_color(color_add)
+        red_before, green_before, blue_before = get_color_RGB(color_before)
+        red_add, green_add, blue_add = get_color_RGB(color_add)
         red = int(red_before * unopacity + red_add * opacity)
         green = int(green_before * unopacity + green_add * opacity)
         blue = int(blue_before * unopacity + blue_add * opacity)
         return get_hex_color(red, green, blue)
 
     def same_layer_renderer(self, color_before, color_add):
-        red_before, green_before, blue_before = get_RGB_color(color_before)
-        red_add, green_add, blue_add = get_RGB_color(color_add)
+        red_before, green_before, blue_before = get_color_RGB(color_before)
+        red_add, green_add, blue_add = get_color_RGB(color_add)
         red = red_before + red_add if red_before + red_add < 256 else 255
         green = green_before + green_add if green_before + green_add < 256 else 255
         blue = blue_before + blue_add if blue_before + blue_add < 256 else 255
@@ -170,25 +218,6 @@ class LayerRenderer:
         self.render_result = np.zeros(
             (self.transition_frame.shape[0], self.transition_frame.shape[2], self.transition_frame.shape[3]),
             dtype='uint32')
-
-
-
-        # for frame in range(0, self.transition_frame.shape[0]):
-        #     for layer in range(0, self.transition_frame.shape[1]):
-        #         for i in range(0, self.transition_frame.shape[2]):
-        #             for j in range(0, self.transition_frame.shape[3]):
-        #                 pixel_color = self.transition_frame[frame][layer][i][j]
-        #                 # 不透明度为0
-        #                 if pixel_color < 0x01000000:
-        #                     continue
-        #                 if get_color_opacity(pixel_color) == 0xff or layer == 0:
-        #                     # 完全不透明,清除透明度通道，并赋值
-        #                     self.render_result[frame][i][j] = pixel_color & 0x00ffffff
-        #                 else:
-        #                     # 部分透明
-        #                     color_before = self.render_result[frame][i][j]
-        #                     self.render_result[frame][i][j] = self.color_opacity_transition(color_before, pixel_color)
-
         # 新版本 使用nditer
         it = np.nditer(self.transition_frame, flags=['multi_index'])
         while not it.finished:

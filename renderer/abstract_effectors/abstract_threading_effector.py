@@ -38,8 +38,8 @@ class AbstractThreadingEffector(metaclass=ABCMeta):
     def color_transition(self, color_before, color_after, layer_sum, layer_id):
         if color_before == color_after:
             return color_after
-        red_before, green_before, blue_before = get_RGB_color(color_before)
-        red_after, green_after, blue_after = get_RGB_color(color_after)
+        red_before, green_before, blue_before = get_color_RGB(color_before)
+        red_after, green_after, blue_after = get_color_RGB(color_after)
         red_step = (red_before - red_after) / layer_sum
         green_step = (green_before - green_after) / layer_sum
         blue_step = (blue_before - blue_after) / layer_sum

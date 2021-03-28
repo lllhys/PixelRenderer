@@ -24,8 +24,13 @@ def get_opacity_color(red, green, blue, opacity=0xff):
     """
     return (opacity << 24) | (red << 16) | (green << 8) | blue
 
+def get_opacity_color_from_list(color_list):
+    if (color_list[0] == 0) and (color_list[1] == 0) and (color_list[2] == 0):
+        return 0x0
+    return (0xff << 24) | (color_list[2] << 16) | (color_list[1] << 8) | color_list[0]
 
-def get_RGB_color(hex_color):
+
+def get_color_RGB(hex_color):
     """
     从Hex color 获取RGB通道值
     :param hex_color: hex color
@@ -84,8 +89,8 @@ def color_transition(color_before, color_after, layer_sum, layer_id):
     """
     if color_before == color_after:
         return color_after
-    red_before, green_before, blue_before = get_RGB_color(color_before)
-    red_after, green_after, blue_after = get_RGB_color(color_after)
+    red_before, green_before, blue_before = get_color_RGB(color_before)
+    red_after, green_after, blue_after = get_color_RGB(color_after)
     red_step = (red_before - red_after) / layer_sum
     green_step = (green_before - green_after) / layer_sum
     blue_step = (blue_before - blue_after) / layer_sum
