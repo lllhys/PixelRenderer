@@ -83,9 +83,31 @@ Opacity color为PixelRenderer中自定义的具有不透明度的颜色，为uin
 
 ---
 
+<div style='font-size: 25px;font-weight:700' id="get_opacity_color">
+
+?> get_opacity_color_from_list()
+
+</div>
+
+##### 介绍
+
+- 从颜色List(blue,green,red)生成一个具有不透明度的颜色
+
+##### 参数
+
+|参数名|必须|类型|默认值|介绍|
+|:---|:----|:---|---|---|
+|color_list|是|List|无|颜色List，依次分别为b，g，r|
+
+##### 返回
+
+- 具有不透明度的颜色
+
+---
+
 <div style='font-size: 25px;font-weight:700'>
 
-?> get_RGB_color()
+?> get_color_RGB()
 
 </div>
 
