@@ -56,9 +56,9 @@ def get_effector(effector_name,func_name):
             return effector_desc['effector']
         else:
             print("效果器{}不支持{}方法，使用Default效果器".format(effector_name,func_name))
-            return _effectors['Default']['effector']
+            return _effectors['default']['effector']
     else:
         print("效果器{}不存在，使用Default效果器".format(effector_name))
-        return _effectors['Default']['effector']
+        return _effectors['default']['effector']
 
 

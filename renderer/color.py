@@ -1,6 +1,60 @@
 import numpy as np
 
 
+
+class RGBA:
+    r = 0
+    g = 0
+    b = 0
+    a = 0
+    w = 0
+
+    def __init__(self, r, g, b, a, w=0):
+        self.r = r
+        self.g = g
+        self.b = b
+        self.a = a
+        self.w = w
+
+    def get_color(self):
+        return (self.a << 24) | (self.r << 16) | (self.g << 8) | self.b
+
+    def get_hex_color(self):
+        return (self.w << 24) | (self.r << 16) | (self.g << 8) | self.b
+
+    def get_RGB_color(self):
+        return (self.r << 16) | (self.g << 8) | self.b
+
+    # getter and setter
+    def get_alpha(self):
+        return self.a
+
+    def get_red(self):
+        return self.r
+
+    def get_blue(self):
+        return self.b
+
+    def get_green(self):
+        return self.g
+
+    def set_alpha(self, a):
+        self.a = a
+
+    def set_red(self,r):
+        self.r = r
+
+    def set_green(self,g):
+        self.g = g
+
+    def set_blue(self,b):
+        self.b = b
+
+
+
+
+
+
 def get_hex_color(red, green, blue, white=0):
     """
     获取用于PixelDisplay显示的颜色
@@ -13,16 +67,16 @@ def get_hex_color(red, green, blue, white=0):
     return (white << 24) | (red << 16) | (green << 8) | blue
 
 
-def get_opacity_color(red, green, blue, opacity=0xff):
+def get_opacity_color(red, green, blue, alpha=0xff):
     """
     生成一个具有不透明度的颜色
     :param red: 红色值
     :param green: 绿色值
     :param blue: 蓝色值
-    :param opacity: 不透明度
+    :param alpha: 不透明度
     :return: 不透明度颜色
     """
-    return (opacity << 24) | (red << 16) | (green << 8) | blue
+    return (alpha << 24) | (red << 16) | (green << 8) | blue
 
 def get_opacity_color_from_list(color_list):
     if (color_list[0] == 0) and (color_list[1] == 0) and (color_list[2] == 0):
@@ -39,7 +93,7 @@ def get_color_RGB(hex_color):
     return (hex_color >> 16) & 0x00ff, (hex_color >> 8) & 0x00ff, hex_color & 0x00ff
 
 
-def get_color_opacity(opacity_color):
+def get_color_alpha(opacity_color):
     """
     获取颜色不透明度
     :param opacity_color: 不透明度Color
@@ -68,43 +122,44 @@ def get_random_color_style(shape):
     return np.random.randint(0xff000000,0xffffffff,shape,dtype='uint32')
 
 
-def get_color_style(shape, color):
+def get_color_style(shape, RGBA_color):
     """
     生成用于初始化Element的指定颜色样式
     :param shape: shape样式
     :param color: 颜色
     :return: numpy矩阵
     """
+    color = RGBA_color.get_color()
     return np.full(shape,color,dtype='uint32')
-
-
-def color_transition(color_before, color_after, layer_sum, layer_id):
-    """
-    生成颜色过渡
-    :param color_before: 原颜色
-    :param color_after: 过渡后颜色
-    :param layer_sum: 过渡帧数
-    :param layer_id: 当前帧
-    :return: 不透明度颜色
-    """
-    if color_before == color_after:
-        return color_after
-    red_before, green_before, blue_before = get_color_RGB(color_before)
-    red_after, green_after, blue_after = get_color_RGB(color_after)
-    red_step = (red_before - red_after) / layer_sum
-    green_step = (green_before - green_after) / layer_sum
-    blue_step = (blue_before - blue_after) / layer_sum
-    return get_opacity_color(red_before - red_step * layer_id, green_before - green_step * layer_id,
-                                 blue_before - blue_step * layer_id)
-
-def opacity_transition(opacity_before, opacity_after, layer_sum, layer_id):
-    """
-    不透明度过渡
-    :param opacity_before: 原不透明度
-    :param opacity_after: 新不透明度
-    :param layer_sum: 过渡帧数
-    :param layer_id: 当前帧
-    :return: 不透明度
-    """
-    opacity_step = (opacity_before - opacity_after) / layer_sum
-    return int(opacity_before - opacity_step * layer_id)
+#
+#
+# def color_transition(color_before, color_after, layer_sum, layer_id):
+#     """
+#     生成颜色过渡
+#     :param color_before: 原颜色
+#     :param color_after: 过渡后颜色
+#     :param layer_sum: 过渡帧数
+#     :param layer_id: 当前帧
+#     :return: 不透明度颜色
+#     """
+#     if color_before == color_after:
+#         return color_after
+#     red_before, green_before, blue_before = get_color_RGB(color_before)
+#     red_after, green_after, blue_after = get_color_RGB(color_after)
+#     red_step = (red_before - red_after) / layer_sum
+#     green_step = (green_before - green_after) / layer_sum
+#     blue_step = (blue_before - blue_after) / layer_sum
+#     return get_opacity_color(red_before - red_step * layer_id, green_before - green_step * layer_id,
+#                                  blue_before - blue_step * layer_id)
+#
+# def opacity_transition(opacity_before, opacity_after, layer_sum, layer_id):
+#     """
+#     不透明度过渡
+#     :param opacity_before: 原不透明度
+#     :param opacity_after: 新不透明度
+#     :param layer_sum: 过渡帧数
+#     :param layer_id: 当前帧
+#     :return: 不透明度
+#     """
+#     opacity_step = (opacity_before - opacity_after) / layer_sum
+#     return int(opacity_before - opacity_step * layer_id)

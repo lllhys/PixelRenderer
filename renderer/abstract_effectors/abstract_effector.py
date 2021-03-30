@@ -5,16 +5,16 @@ from renderer.color import *
 
 class AbstractEffector(metaclass=ABCMeta):
     _name_ = 'AbstractEffector'
-    _func_ = ['show', 'hide', 'move', 'switch']
+    _func_ = ['appear', 'disappear', 'move', 'switch']
 
     element = None
     position = None
     element_shape = None
     element_style = None
 
-    def __init__(self, element_desc):
-        self.element = element_desc['element']
-        self.position = element_desc['position']
+    def __init__(self, element):
+        self.element = element
+        self.position = element.position
         self.element_shape = self.element.shape
         self.element_style = self.element.element_style
 
@@ -33,11 +33,14 @@ class AbstractEffector(metaclass=ABCMeta):
         opacity_step = (opacity_before - opacity_after) / layer_sum
         return int(opacity_before - opacity_step * layer_id)
 
-    def show_render(self):
-        return self.show()
+    def generate_position_list(self, position, length):
+        return [position for i in range(0,length)]
 
-    def hide_render(self):
-        return self.hide()
+    def appear_render(self):
+        return self.appear()
+
+    def disappear_render(self):
+        return self.disappear()
 
     def move_render(self,new_position):
         return self.move(new_position)
@@ -45,8 +48,19 @@ class AbstractEffector(metaclass=ABCMeta):
     def switch_render(self, element_after):
         return self.switch_element_style(element_after)
 
+    def get_func_by_name(self, effector_name):
+        if effector_name == 'appear':
+            return self.appear_render
+        elif effector_name == 'disappear':
+            return self.disappear_render
+        elif effector_name == 'move':
+            return self.move_render
+        elif effector_name == 'switch':
+            return self.switch_render
+        return None
+
     @abstractmethod
-    def show(self):
+    def appear(self):
         """
         元素过渡动画渲染函数
         :return: 所有过渡帧
@@ -54,7 +68,7 @@ class AbstractEffector(metaclass=ABCMeta):
         return None
 
     @abstractmethod
-    def hide(self):
+    def disappear(self):
         """
         元素过渡动画渲染函数
         :return: 所有过渡帧
