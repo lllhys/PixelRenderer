@@ -8,7 +8,7 @@ logger = loggers.get_logger()
 
 class PixelElement:
     name = ''
-    shape = (0, 0)
+    # shape = (0, 0)
     position = (0, 0)
     layer = 1
     element_type = 'static'
