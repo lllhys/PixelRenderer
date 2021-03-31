@@ -15,3 +15,4 @@
 * PixelDisplay开发调试工具
     * [简介](PixelDisplay/README.md)
     * [API手册](PixelDisplay/api.md)
+* [更新日志](update_log.md)
